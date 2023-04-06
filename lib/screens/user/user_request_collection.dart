@@ -7,6 +7,7 @@ import 'package:garbage_management/api.dart';
 import 'package:garbage_management/screens/user/addrequest.dart';
 import 'package:garbage_management/screens/user/request_model.dart';
 import 'package:garbage_management/screens/user/user_home.dart';
+import 'package:garbage_management/screens/user/user_payment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Userrequestcollection extends StatefulWidget {
@@ -20,7 +21,7 @@ class _UserrequestcollectionState extends State<Userrequestcollection> {
   String garstatus='';
   late SharedPreferences localStorage;
   bool _isLoading = false;
-  late String user_id;
+  late String user_id,req_id;
   List requests = [];
 
   @override
@@ -90,30 +91,46 @@ class _UserrequestcollectionState extends State<Userrequestcollection> {
                 shrinkWrap: true,
                 itemCount: requests.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    child: Container(
-                      color: Colors.black54,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                  return GestureDetector(
+                    onTap: ()async {
+                      req_id=requests[index]['_id'];
+                      localStorage = await SharedPreferences.getInstance();
+                      localStorage.setString('_id', req_id.toString());
+                      print("req ${req_id}");
 
-                                  Text((requests[index]['garbage_status']),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      )),
-                                ],
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Userpayments(),
+                      ));
+                    },
+                    child: Card(
+                      child: Container(
+                        color: Colors.black54,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text((requests[index]['garbage_status']),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        )),
+                                    Text(('Date : '+requests[index]['date']),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        )),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
 
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

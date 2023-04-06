@@ -18,6 +18,24 @@ class _AddrequestState extends State<Addrequest> {
   late String user_id;
   late SharedPreferences localStorage;
   bool _isLoading = false;
+  DateTime selectedDate = DateTime.now();
+
+  late String startDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        startDate =
+        '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}';
+      });
+    }
+  }
 
   final _formKey = GlobalKey<FormState>();
   TextEditingController _statuscontroller = TextEditingController();
@@ -32,7 +50,7 @@ class _AddrequestState extends State<Addrequest> {
     var data = {
       "user_id":user_id.replaceAll('"', '') ,
       "garbage_status":_statuscontroller.text.trim(),
-
+      "date":startDate,
     };
     print(data);
     var res = await Api().authData(data, '/request/add-request');
@@ -133,7 +151,39 @@ class _AddrequestState extends State<Addrequest> {
                   ),
                 ),
               ),
+              SizedBox(height: 20),
+              Row(
 
+                children: [
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8-.0),
+                    child: Container(
+                      height: 45,
+                      width: 150,
+                      margin: const EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.all(3.0),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black26)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text('${selectedDate.year}-${selectedDate
+                            .month}-${selectedDate.day}',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black38
+                          ),),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0,),
+                  ElevatedButton(
+                    onPressed: () => _selectDate(context),
+                    child: const Text('Select date'),
+                  ),
+                ],
+              ),
 
               Padding(
                 padding: const EdgeInsets.all(20),

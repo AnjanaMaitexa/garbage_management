@@ -4,6 +4,7 @@ import 'package:garbage_management/screens/user/user_editprofile.dart';
 import 'package:garbage_management/screens/user/user_notification.dart';
 import 'package:garbage_management/screens/user/user_payment.dart';
 import 'package:garbage_management/screens/user/user_request_collection.dart';
+import 'package:garbage_management/screens/user/viewpayment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:garbage_management/login.dart';
 
@@ -192,7 +193,7 @@ class _UserhomeState extends State<Userhome> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Userpayments()),
+                            MaterialPageRoute(builder: (context) => ViewPay()),
                           );
                         },
 
