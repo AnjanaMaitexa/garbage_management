@@ -69,7 +69,7 @@ class _StationregistrationState extends State<Stationregistration> {
     var data = {
       "username": usernameController.text.trim(),
       "password": passwordController.text.trim(),
-      "name": nameController.text.trim(),
+      "stationname": nameController.text.trim(),
       "address": addressController.text.trim(),
       "location": locController.text.trim(),
       "corporation_id": selectId,
@@ -78,7 +78,7 @@ class _StationregistrationState extends State<Stationregistration> {
     };
     print('reg data${data}');
 
-    var res = await Api().authData(data,'/user/register');
+    var res = await Api().authData(data,'/user/recycler');
     var body = json.decode(res.body);
     print('reg body${body}');
     if(body['success']==true)

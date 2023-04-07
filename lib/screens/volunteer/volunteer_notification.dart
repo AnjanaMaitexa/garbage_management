@@ -1,9 +1,87 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:garbage_management/api.dart';
+import 'package:garbage_management/screens/user/user_home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Volunteer_home.dart';
 
-class Volunteernotification extends StatelessWidget {
+class Volunteernotification extends StatefulWidget {
   const Volunteernotification({Key? key}) : super(key: key);
+
+  @override
+  State<Volunteernotification> createState() => _VolunteernotificationState();
+}
+
+class _VolunteernotificationState extends State<Volunteernotification> {
+
+  DateTime selectedDate = DateTime.now();
+
+  TextEditingController _notiController = TextEditingController();
+  late String startDate;
+  late SharedPreferences prefs;
+  late String user_id;
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        startDate =
+        '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}';
+      });
+    }
+  }
+
+
+  void addComplaint() async {
+    prefs = await SharedPreferences.getInstance();
+    user_id = (prefs.getString('user_id') ?? '');
+    print('login_id_complaint ${user_id}');
+    setState(() {
+      _isLoading = true;
+    });
+
+    var data = {
+      "user_id": user_id.replaceAll('"', ''),
+      "notification": _notiController.text,
+      "date": startDate,
+    };
+    print(data);
+
+    var res = await Api().authData(data, '/complaint/add-complaint');
+    var body = json.decode(res.body);
+    print('body${body}');
+    if (body['success'] == true) {
+      print(body);
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
+      );
+      Navigator.push(
+        this.context, //add this so it uses the context of the class
+        MaterialPageRoute(
+          builder: (context) => Userhome(),
+        ), //MaterialpageRoute
+      );
+      //   Navigator.push(context as BuildContext, MaterialPageRoute(builder: (context)=>View_Comp()));
+
+    }
+    else {
+      Fluttertoast.showToast(
+        msg: body['message'].toString(),
+        backgroundColor: Colors.grey,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +123,38 @@ class Volunteernotification extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 25),
                   ),
+                ),
+              ],
+            ),
+            Row(
+
+              children: [
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8-.0),
+                  child: Container(
+                    height: 45,
+                    width: 150,
+                    margin: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black26)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text('${selectedDate.year}-${selectedDate
+                          .month}-${selectedDate.day}',
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black38
+                        ),),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20.0,),
+                ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  child: const Text('Start date'),
                 ),
               ],
             ),
@@ -136,21 +246,7 @@ class Volunteernotification extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: Text(
-                    "About Notifications ?",
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue),
-                  ),
-                )
-              ],
-            ),
+
 
           ],
 

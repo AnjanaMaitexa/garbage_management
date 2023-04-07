@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:garbage_management/api.dart';
 import 'package:garbage_management/register_dashboard.dart';
+import 'package:garbage_management/screens/recycle_station/station_home.dart';
 import 'package:garbage_management/screens/user/user_home.dart';
 import 'package:garbage_management/screens/volunteer/Volunteer_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
 
   String user = "1";
   String volunteer="2";
+  String recycle="3";
 
   String storedvalue = "1";
   late SharedPreferences localStorage;
@@ -70,6 +72,11 @@ class _LoginPageState extends State<LoginPage> {
           storedvalue == status.replaceAll('"', '')) {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => Volunteeerhome(),
+        ));
+      } else if (recycle == role.replaceAll('"', '') &&
+          storedvalue == status.replaceAll('"', '')) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => Stationhome(),
         ));
       }  else {
         Fluttertoast.showToast(

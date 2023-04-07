@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:garbage_management/login.dart';
+import 'package:garbage_management/screens/recycle_station/station_home.dart';
 import 'package:garbage_management/screens/user/user_home.dart';
 import 'package:garbage_management/screens/volunteer/Volunteer_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,7 @@ enum Role{user,company,depart}
 class _SplashScreenState extends State<SplashScreen> {
   late String u="1";
   late String v="2";
+  late String r="3";
   late String role="";
   late SharedPreferences localStorage;
 
@@ -30,6 +32,9 @@ class _SplashScreenState extends State<SplashScreen> {
     }else  if (v == role.replaceAll('"', '')) {
     Navigator.push(
     context, MaterialPageRoute(builder: (context) => Volunteeerhome()));
+    }else  if (r == role.replaceAll('"', '')) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Stationhome()));
     }
 
     else  {

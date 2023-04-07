@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:garbage_management/Widgets/background.dart';
+import 'package:garbage_management/api.dart';
 import 'package:garbage_management/screens/user/notify_model.dart';
 import 'package:garbage_management/screens/user/user_home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Usernotification extends StatefulWidget {
@@ -12,11 +17,51 @@ class Usernotification extends StatefulWidget {
 }
 
 class _UsernotificationState extends State<Usernotification> {
-  List model = [
-    NotifyModel(notid: "101",notify:"garbage is full"),
-  NotifyModel(notid: "102",notify:"issue"),
-  NotifyModel(notid: "103",notify:"issue"),
-  ];
+  bool _isLoading = false;
+
+  List noti = [];
+  late SharedPreferences localStorage;
+  late String user_id,login_id;
+
+  late String startDate;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    viewNotify();
+
+  }
+
+  void viewNotify() async {
+    localStorage = await SharedPreferences.getInstance();
+    user_id = (localStorage.getString('user_id') ?? '');
+
+    var res = await Api().getData('/user/view-user-notification/'+user_id.replaceAll('"', ''));
+
+    if (res.statusCode == 201) {
+      var body = json.decode(res.body)['data'];
+
+      print("req${body}");
+      setState(()  {
+        noti = body;
+        print("req${noti}");
+
+      });
+    } else {
+      setState(() {
+        noti = [];
+        Fluttertoast.showToast(
+          msg: "No Notifications  yet",
+          backgroundColor: Colors.grey,
+        );
+
+
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -47,7 +92,7 @@ class _UsernotificationState extends State<Usernotification> {
               SizedBox(height: 20),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: model.length,
+                itemCount: noti.length,
                 itemBuilder: (context, index) {
                   return Card(
                     child: Container(
@@ -62,23 +107,23 @@ class _UsernotificationState extends State<Usernotification> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Id:" + model[index].notid.toString(),
+                              noti[index]['notifications'],
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
                                     ),
                                   ),
-                                  Text(model[index].notify,
+                                /*  Text(model[index].notify,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
-                                      )),
+                                      )),*/
                                 ],
                               ),
                             ),
                           ),
-                          ElevatedButton(
-                              onPressed: () {}, child: Text("Ok")),
+                        /*  ElevatedButton(
+                              onPressed: () {}, child: Text("Ok")),*/
                         ],
                       ),
                     ),
