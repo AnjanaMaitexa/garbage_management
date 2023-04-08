@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:garbage_management/screens/recycle_station/station_home.dart';
 
-class Stationeditprofile extends StatelessWidget {
+class Stationeditprofile extends StatefulWidget {
   const Stationeditprofile({Key? key}) : super(key: key);
+
+  @override
+  State<Stationeditprofile> createState() => _StationeditprofileState();
+}
+
+class _StationeditprofileState extends State<Stationeditprofile> {
 
   @override
   Widget build(BuildContext context) {

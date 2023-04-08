@@ -20,7 +20,9 @@ class _VolunteeerhomeState extends State<Volunteeerhome> {
   Future<void> getLogin() async {
     localStorage = await SharedPreferences.getInstance();
     login_id = (localStorage.getString('login_id') ?? '');
+    user_id = (localStorage.getString('user_id') ?? '');
     print('volun_dashlogin ${login_id}');
+    print('volun_id ${user_id}');
   }
   @override
   void initState() {

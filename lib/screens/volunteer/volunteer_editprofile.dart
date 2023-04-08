@@ -21,7 +21,7 @@ class _VolunteereditprofileState extends State<Volunteereditprofile> {
   TextEditingController addressController = TextEditingController();
   TextEditingController phnController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  late String loginid;
+  late String loginid,user_id;
   String name = "";
   String address = "";
   String phn = "";
@@ -38,17 +38,17 @@ class _VolunteereditprofileState extends State<Volunteereditprofile> {
 
   Future<void> _viewPro() async {
     prefs = await SharedPreferences.getInstance();
-    loginid = (prefs.getString('login_id') ?? '');
-    print('login_idupdate ${loginid}');
+    user_id = (prefs.getString('user_id') ?? '');
+    print('login_idupdate ${user_id}');
     var res = await Api()
-        .getData('/signup/user-profile/' + loginid.replaceAll('"', ''));
+        .getData('/user/view-volunteer-profile/' + user_id.replaceAll('"', ''));
     var body = json.decode(res.body);
     print(body);
     setState(() {
-      name = body['data']['name'];
+      name = body['data']['volunteername'];
       print(name);
       address = body['data']['address'];
-      phn = body['data']['phone'];
+      phn = body['data']['phonenumber'];
       email = body['data']['email'];
 
       nameController.text = name;
@@ -59,15 +59,18 @@ class _VolunteereditprofileState extends State<Volunteereditprofile> {
   }
 
   _update() async {
+    prefs = await SharedPreferences.getInstance();
+    loginid = (prefs.getString('login_id') ?? '');
+
     setState(() {
       var _isLoading = true;
     });
 
     var data = {
-      "name": nameController.text,
+      "volunteername": nameController.text,
       "address": addressController.text,
       "email": emailController.text,
-      "phone": phnController.text,
+      "phonenumber": phnController.text,
       "login_id": loginid.replaceAll('"', '')
     };
     print(data);

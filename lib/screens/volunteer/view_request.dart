@@ -18,7 +18,7 @@ class _ViewRequestState extends State<ViewRequest> {
   String complaint='';
   late SharedPreferences localStorage;
 
-  late String login_id;
+  late String login_id,_id;
   late bool _isExpanded;
   late bool isExpanded=false;
   List request = [];
@@ -58,6 +58,28 @@ class _ViewRequestState extends State<ViewRequest> {
       });
     }
   }
+  void acceptRequest()async{
+    var res = await Api()
+        .getData('/request/volunteer-accept-request/' + _id);
+    var body = json.decode(res.body);
+    print(body);
+    Fluttertoast.showToast(
+      msg:"Accepted",
+      backgroundColor: Colors.grey,
+    );
+
+  }
+  void rejectRequest()async{
+    var res = await Api()
+        .getData('/request/volunteer-reject-request/' + _id);
+    var body = json.decode(res.body);
+    print(body);
+    Fluttertoast.showToast(
+      msg:"Accepted",
+      backgroundColor: Colors.grey,
+    );
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,45 +113,121 @@ class _ViewRequestState extends State<ViewRequest> {
                   shrinkWrap: true,
                   itemCount: request.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                        child: Container(
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        Text(request[index]['garbage_status']),
-                                        request[index]['date']==null?Text("No date available"):Text( request[index]['date']),
-                                      ],
-                                    ),
-
-
+                    return GestureDetector(
+                      onTap:(){
+                        _id=request[index]['_id'];
+                        print("id${_id}");
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Wrap(
+                              children: [
+                                SizedBox(height: 50,),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(50),
+                                                color: Colors.lightBlueAccent),
+                                            height:50,
+                                            width: MediaQuery.of(context).size.width,
+                                            child: TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  acceptRequest();
+                                                });
+                                              },
+                                              child: Text(
+                                                "ACCEPT",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(50),
+                                                color: Colors.lightBlueAccent),
+                                            height: 50,
+                                            child: TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  rejectRequest();
+                                                });
+                                              },
+                                              child: Text(
+                                                "REJECT",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  /*    ExpandIcon(
-                          isExpanded: _isExpanded,
-                          color: Colors.black,
-                          expandedColor: Colors.black,
-                          disabledColor: Colors.grey,
-                          onPressed: (bool isExpanded) {
-                            setState(() {
-                              _isExpanded = isExpanded;
-                            });
+                                ),
+                              ],
+                            );
                           },
-                        ),*/
+                        );
+                      } ,
 
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
+                      child: Card(
+                          child: Container(
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Text(request[index]['garbage_status']),
+                                          request[index]['date']==null?Text("No date available"):Text( request[index]['date']),
+                                        ],
+                                      ),
 
 
+                                    ),
+                                    /*    ExpandIcon(
+                            isExpanded: _isExpanded,
+                            color: Colors.black,
+                            expandedColor: Colors.black,
+                            disabledColor: Colors.grey,
+                            onPressed: (bool isExpanded) {
+                              setState(() {
+                                _isExpanded = isExpanded;
+                              });
+                            },
+                          ),*/
+
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+
+
+                      ),
                     );
                   },
                 )

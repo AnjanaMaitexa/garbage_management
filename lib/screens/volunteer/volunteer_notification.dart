@@ -26,6 +26,8 @@ class _VolunteernotificationState extends State<Volunteernotification> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
+  List users = [];
+  String? selectUser;
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -40,8 +42,24 @@ class _VolunteernotificationState extends State<Volunteernotification> {
       });
     }
   }
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllUsers();
+  }
 
+  Future getAllUsers()async{
+    var res = await Api().getData('/user/view-users');
+    var body = json.decode(res.body);
 
+    setState(() {
+      users=body['data'];
+      print('userlist${users}');
+      // depart_id = body['data'][0]['_id'];
+
+    });
+  }
   void addComplaint() async {
     prefs = await SharedPreferences.getInstance();
     user_id = (prefs.getString('user_id') ?? '');
@@ -126,6 +144,35 @@ class _VolunteernotificationState extends State<Volunteernotification> {
                 ),
               ],
             ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SizedBox(
+                width: double.maxFinite,
+                child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      disabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)) ,
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                    ),
+                    hint: Text('Users'),
+                    value: selectUser,
+                    items: users
+                        .map((type) => DropdownMenuItem<String>(
+                      value: type['_id'].toString(),
+                      child: Text(
+                        type['name'].toString(),
+                        style: TextStyle(color: Colors.black45),
+                      ),
+                    ))
+                        .toList(),
+                    onChanged: (type) {
+                      setState(() {
+                        selectUser = type;
+                      });
+                    }),
+              ),
+            ),
             Row(
 
               children: [
@@ -183,7 +230,7 @@ class _VolunteernotificationState extends State<Volunteernotification> {
             ),
             Row(
               children: [
-                Expanded(
+              /*  Expanded(
 
                   child: Padding(
                     padding: const EdgeInsets.only(left: 20,right: 20,top: 30,bottom: 20),
@@ -204,12 +251,12 @@ class _VolunteernotificationState extends State<Volunteernotification> {
                           ]),
                       child: Column(mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Apsouce",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.white),)
+                          Text("Send",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.white),)
                         ],
                       ),
                     ),
                   ),
-                ),
+                ),*/
                 Expanded(
 
                   child: Padding(
@@ -237,7 +284,7 @@ class _VolunteernotificationState extends State<Volunteernotification> {
                             ]),
                         child: Column(mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Reject",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.white),)
+                            Text("Send",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.white),)
                           ],
                         ),
                       ),
