@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:garbage_management/api.dart';
 import 'package:garbage_management/screens/user/user_home.dart';
@@ -112,7 +113,12 @@ class _UserpaymentsState extends State<Userpayments> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  maxLength: 10,
+                  maxLength: 16,
+                  keyboardType: TextInputType.number, // set the keyboard type to numeric
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // only allow digits
+                    LengthLimitingTextInputFormatter(16), // limit the length to 16
+                  ],
                   style: TextStyle(color: Colors.black26),
                   cursorColor: Colors.blue,
                   decoration: InputDecoration(
